@@ -266,11 +266,17 @@ public class DynamicPost extends BaseActivity implements OnClickListener, Matrix
 
     //显示大图pager
     private void showViewPager(int index) {
+        //hide and show
         pagerContainer.setVisibility(View.VISIBLE);
         editContainer.setVisibility(View.GONE);
+
         viewpager.setAdapter(viewpager.new LocalViewPagerAdapter(pictures));
         viewpager.setCurrentItem(index);
+
+        //update text
         mCountView.setText((index + 1) + "/" + pictures.size());
+
+        //animation for pagerContainer
         AnimationSet set = new AnimationSet(true);
         ScaleAnimation scaleAnimation = new ScaleAnimation((float) 0.9, 1, (float) 0.9, 1, pagerContainer.getWidth() / 2, pagerContainer.getHeight() / 2);
         scaleAnimation.setDuration(200);
@@ -283,8 +289,11 @@ public class DynamicPost extends BaseActivity implements OnClickListener, Matrix
 
     //关闭大图显示
     private void hideViewPager() {
+        //hide and show
         pagerContainer.setVisibility(View.GONE);
         editContainer.setVisibility(View.VISIBLE);
+
+        //anim
         AnimationSet set = new AnimationSet(true);
         ScaleAnimation scaleAnimation = new ScaleAnimation(1, (float) 0.9, 1, (float) 0.9, pagerContainer.getWidth() / 2, pagerContainer.getHeight() / 2);
         scaleAnimation.setDuration(200);
@@ -310,21 +319,32 @@ public class DynamicPost extends BaseActivity implements OnClickListener, Matrix
                     //获取选中的图片
                     List<LocalImageHelper.LocalFile> files = LocalImageHelper.getInstance().getCheckedItems();
                     for (int i = 0; i < files.size(); i++) {
+                        //动态添加选中的图片(FilterImageView)
+
+                        //layoutparams
                         LayoutParams params = new LayoutParams(size, size);
                         params.rightMargin = padding;
+
                         FilterImageView imageView = new FilterImageView(this);
                         imageView.setLayoutParams(params);
                         imageView.setScaleType(ScaleType.CENTER_CROP);
                         ImageLoader.getInstance().displayImage(files.get(i).getThumbnailUri(), new ImageViewAware(imageView), options,
                                 null, null, files.get(i).getOrientation());
                         imageView.setOnClickListener(this);
+
+                        //add to list
                         pictures.add(files.get(i));
                         if (pictures.size() == 9) {
+                            //to max num
                             add.setVisibility(View.GONE);
                         } else {
                             add.setVisibility(View.VISIBLE);
                         }
+
+                        //add to container
                         picContainer.addView(imageView, picContainer.getChildCount() - 1);
+
+                        //update pic mains
                         picRemain.setText(pictures.size() + "/9");
                         LocalImageHelper.getInstance().setCurrentSize(pictures.size());
                     }
@@ -332,6 +352,7 @@ public class DynamicPost extends BaseActivity implements OnClickListener, Matrix
                     files.clear();
                     //设置当前选中的图片数量
                     LocalImageHelper.getInstance().setCurrentSize(pictures.size());
+
                     //延迟滑动至最右边
                     new Handler().postDelayed(new Runnable() {
                         public void run() {
